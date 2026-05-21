@@ -104,7 +104,7 @@ export default function DashboardPage() {
   }
 
   async function removePasskey(id: string) {
-    if (!window.confirm('Remove this passkey row from database.json?')) return;
+    if (!window.confirm('Remove this passkey row from MongoDB?')) return;
 
     setRemovingId(id);
     try {
@@ -183,7 +183,7 @@ export default function DashboardPage() {
         {currentRow && (
           <div className="mt-8 rounded-lg border border-emerald-200 bg-emerald-50/80 p-4 dark:border-emerald-900/80 dark:bg-emerald-950/30">
             <h2 className="text-xs font-semibold uppercase tracking-wide text-emerald-800 dark:text-emerald-300">
-              Current credential (matched in database.json)
+              Current credential (matched in MongoDB)
             </h2>
             <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
               <div className="sm:col-span-2">
@@ -253,7 +253,7 @@ export default function DashboardPage() {
         <div className="mt-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-              All registrations (database.json)
+              All registrations (MongoDB)
             </h2>
             <button
               type="button"

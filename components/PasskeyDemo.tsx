@@ -58,14 +58,14 @@ export function PasskeyDemo() {
       setDemoUsers(users);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      const loadError = `Failed to load database.json (${message})`;
+      const loadError = `Failed to load saved passkeys (${message})`;
       setLog((prev) => `${prev ? `${prev}\n` : ''}${loadError}`.trim());
       showToast(loadError, 'error');
     }
   }, [showToast]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial load from database.json API
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial load from /api/users
     void refreshUsers();
   }, [refreshUsers]);
 
@@ -141,7 +141,7 @@ export function PasskeyDemo() {
       await clearDemoPasskeyUsers();
       setVerifyUserId('');
       await refreshUsers();
-      appendLog('Cleared all rows from database.json.');
+      appendLog('Cleared all saved passkey rows from MongoDB.');
       showToast(DemoUserFacingAlert.PasskeysCleared, 'success');
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
@@ -299,15 +299,11 @@ export function PasskeyDemo() {
             Verify (sign in)
           </h3>
           <p className='mt-1 text-xs text-zinc-500 dark:text-zinc-400'>
-            Saved in{' '}
-            <code className='rounded bg-zinc-100 px-1 text-[10px] dark:bg-zinc-800'>
-              database.json
-            </code>{' '}
-            via{' '}
+            Saved via{' '}
             <code className='rounded bg-zinc-100 px-1 text-[10px] dark:bg-zinc-800'>
               {DemoApiPath.Users}
-            </code>
-            — pick who to authenticate as.
+            </code>{' '}
+            (MongoDB) — pick who to authenticate as.
           </p>
 
           <label className='mt-4 flex flex-col gap-1'>
@@ -363,8 +359,7 @@ export function PasskeyDemo() {
         {demoUsers.length > 0 && (
           <p className='mt-4 text-sm text-zinc-600 dark:text-zinc-400'>
             {demoUsers.length} registration
-            {demoUsers.length === 1 ? '' : 's'} in{' '}
-            <code className='text-xs'>database.json</code>.
+            {demoUsers.length === 1 ? '' : 's'} stored in MongoDB.
           </p>
         )}
       </div>

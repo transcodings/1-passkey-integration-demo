@@ -235,8 +235,8 @@ export enum DemoUserFacingAlert {
   /** NotAllowedError / AbortError / TimeoutError — user cancelled or the sheet timed out. */
   PasskeyCeremonyCancelled =
     'Passkey was cancelled or timed out. Try again when you are ready.',
-  PasskeysCleared = 'All saved passkeys were removed from database.json.',
-  PasskeyRemoved = 'Passkey removed from database.json.',
+  PasskeysCleared = 'All saved passkeys were removed from MongoDB.',
+  PasskeyRemoved = 'Passkey removed from MongoDB.',
   ClearPasskeysConfirm =
-    'Remove every passkey row from database.json? This demo does not revoke credentials in the browser or on your device.',
+    'Remove every saved passkey row from MongoDB? This demo does not revoke credentials in the browser or on your device.',
 }

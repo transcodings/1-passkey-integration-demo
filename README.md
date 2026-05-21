@@ -2,9 +2,9 @@
 
 A small **Next.js app** that shows how **passkey (WebAuthn) registration and sign-in** work in the browser.
 
-No auth SDK, no external service — just the standard Web Authentication API, a JSON file, and enough code to follow the flow end to end.
+No auth SDK, no external service — just the standard Web Authentication API, MongoDB for credential metadata, and enough code to follow the flow end to end.
 
-**Good for:** learning what `navigator.credentials.create` / `.get` actually do, copying the pattern into your own app, or demoing Touch ID / Windows Hello / security keys on `localhost`.
+**Good for:** learning what `navigator.credentials.create` / `.get` actually do, copying the pattern into your own app, or demoing Touch ID / Windows Hello / security keys on `localhost` or Vercel.
 
 > **This is a teaching demo, not production auth.** Challenges are created in the browser and assertions are **not** verified on a server. See [What this demo skips](#what-this-demo-skips).
 
@@ -14,12 +14,24 @@ No auth SDK, no external service — just the standard Web Authentication API, a
 
 ```bash
 npm install
+cp .env.example .env.local
+# Edit .env.local — set MONGODB_URI to your Atlas connection string
 npm run dev
 ```
 
 Open [http://localhost:4000](http://localhost:4000).
 
 Passkeys need a **secure context** — `localhost` or HTTPS works.
+
+### Environment variables
+
+| Variable | Required | Default | Purpose |
+|----------|----------|---------|---------|
+| `MONGODB_URI` | Yes | — | MongoDB Atlas connection string |
+| `MONGODB_DB_NAME` | No | `passkey-demo` | Database name |
+| `MONGODB_COLLECTION` | No | `passkey_users` | Collection for credential rows |
+
+On **Vercel**, add the same variables under Project → Settings → Environment Variables.
 
 ---
 
@@ -36,21 +48,19 @@ navigator.credentials.create({ publicKey })
        ↓
 Browser shows system UI (Touch ID / Hello / QR / USB key)
        ↓
-Authenticator creates a key pair and returns attestation
+registrationArtifacts.ts extracts public key + sign counter + transports
        ↓
-registrationArtifacts.ts extracts public key + sign counter
-       ↓
-Row saved to database.json via POST /api/users
+Row saved to MongoDB via POST /api/users
 ```
 
-**What gets stored:** credential id, public key (PEM), RP id, label, and a few display fields — enough to sign in again from the dropdown.
+**What gets stored:** credential id, public key (PEM), RP id, transports, label, and display fields — enough to sign in again from the dropdown.
 
 ### 2. Verify (sign in)
 
 ```
 You pick a saved user from the dropdown
        ↓
-verifyPasskey.ts loads credential_id from database.json
+verifyPasskey.ts loads credential_id + transports from MongoDB
        ↓
 navigator.credentials.get({ publicKey: { allowCredentials: […] } })
        ↓
@@ -65,7 +75,7 @@ Demo writes a sessionStorage blob → redirect to /dashboard
 
 ### 3. Dashboard
 
-Shows who you’re signed in as and every row in `database.json`. You can remove individual rows or clear the whole list (demo DB only — passkeys on your device are not revoked).
+Shows who you’re signed in as and every row in MongoDB. You can remove individual rows or clear the whole list (demo store only — passkeys on your device are not revoked).
 
 ---
 
@@ -77,7 +87,11 @@ Shows who you’re signed in as and every row in `database.json`. You can remove
 │   ├── page.tsx                 Home — mounts the passkey form
 │   ├── dashboard/page.tsx       After sign-in; lists saved credentials
 │   ├── layout.tsx               Root layout, theme, toasts
-│   └── api/users/route.ts       GET / POST / DELETE → database.json
+│   └── api/users/route.ts       GET / POST / DELETE → MongoDB
+│
+├── lib/
+│   ├── mongodb.ts               Connection helper (server-only)
+│   └── passkeyUserStore.ts      CRUD + row validation
 │
 ├── components/
 │   ├── PasskeyDemo.tsx          Register + verify UI
@@ -88,16 +102,17 @@ Shows who you’re signed in as and every row in `database.json`. You can remove
 │   ├── registerPasskey.ts       Registration ceremony
 │   ├── verifyPasskey.ts         Sign-in ceremony + demo session
 │   ├── registrationArtifacts.ts Parse attestation (public key, counter)
+│   ├── webauthnTransports.ts    transports extract + verify replay
 │   ├── db.ts                    fetch helpers for /api/users
 │   ├── webauthnEncoding.ts      base64url, random challenge / user handle
 │   └── webauthnErrorMessage.ts    Friendly errors (cancel vs real failure)
 │
 ├── constants.ts                 Enums, API paths, UI copy
-├── database.json                Demo credential store (safe to reset)
-└── public/.well-known/webauthn   Related origins file (hybrid / passkey tooling)
+├── .env.example                 MONGODB_URI template
+└── public/.well-known/webauthn   Related origins (localhost demo only)
 ```
 
-**Rule of thumb:** UI in `components/`, ceremonies in `utility/`, file I/O only in `app/api/`.
+**Rule of thumb:** UI in `components/`, ceremonies in `utility/`, persistence in `lib/` + `app/api/`.
 
 ---
 
@@ -110,7 +125,9 @@ Shows who you’re signed in as and every row in `database.json`. You can remove
 | `DELETE` | `/api/users` | Clear all rows |
 | `DELETE` | `/api/users?id=<uuid>` | Remove one row |
 
-`database.json` is a JSON array. You can edit or empty it during local dev.
+Each MongoDB document matches `DemoPasskeyUser`:
+
+`id`, `credential_id`, `rpid`, `label`, `public_key`, `prev_counter`, `authenticator_attachment`, `transports`, `displayName`, `syntheticUserEmail`, `createdAt`
 
 ---
 
@@ -140,7 +157,7 @@ For non-obvious WebAuthn options (hints, transports, synced passkeys), see the r
 
 ## Stack
 
-Next.js 16 · React 19 · Tailwind CSS v4 · TypeScript · `cbor-x` (decode attestation CBOR)
+Next.js 16 · React 19 · Tailwind CSS v4 · TypeScript · `cbor-x` · MongoDB Node driver
 
 ---
 

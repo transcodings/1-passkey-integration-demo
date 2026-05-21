@@ -1,6 +1,6 @@
 /**
  * `DemoPasskeyUser` row type and browser-side `fetch` helpers for `/api/users`.
- * Server writes `database.json`; this module is safe to import from client components.
+ * Server persists rows in MongoDB via `/api/users`; safe to import from client components.
  */
 import {
   AuthenticatorAttachment,
