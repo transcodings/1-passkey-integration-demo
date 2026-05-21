@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "npx kill-port 4000 && next dev -p 4000",
+    "dev:http": "npx kill-port 4000 && next dev -p 4000",
     "build": "next build",
-    "start": "next start",
+    "start": "npx kill-port 4000 && next start -p 4000",
     "lint": "eslint"
   },
   "dependencies": {
+    "cbor-x": "^1.6.4",
     "next": "16.2.6",
     "react": "19.2.4",
     "react-dom": "19.2.4"
