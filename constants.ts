@@ -160,6 +160,10 @@ export enum DemoResolvedThemeMode {
   Dark = 'dark',
 }
 
+export enum DemoVerifySelectPlaceholder {
+  NoSavedPasskeys = 'No passkeys saved yet',
+}
+
 export enum DemoSessionJsonKey {
   UserName = 'userName',
   DisplayName = 'displayName',
@@ -219,10 +223,6 @@ export enum CredentialButtonCaption {
   ClearAllIdle = 'Clear all',
   ClearAllBusy = 'Clearing all…',
   RemoveRow = 'Remove',
-}
-
-export enum DemoVerifySelectPlaceholder {
-  NoSavedPasskeys = 'No passkeys saved yet',
 }
 
 export enum DemoUserFacingAlert {
