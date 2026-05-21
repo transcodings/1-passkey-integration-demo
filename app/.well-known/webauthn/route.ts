@@ -25,7 +25,7 @@ export const dynamic = 'force-static';
 // 'https://1-passkey-integration-demo.vercel.app',
 // 'https://demo.mexpert-dvi.com',
 // 'https://testing.mexpert-dvi.com',
-const RELATED_ORIGINS = ['https://demo.mexpert-dvi.com'];
+const RELATED_ORIGINS = ['put your origins here'];
 
 export function GET() {
   return NextResponse.json(
