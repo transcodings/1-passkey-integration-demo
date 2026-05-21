@@ -6,7 +6,6 @@ import {
   AuthenticatorAttachment,
   AuthenticatorTransport,
   isAuthenticatorTransport,
-  WebAuthnHint,
 } from '@/constants';
 import type { DemoAuthenticatorAttachment } from './db';
 
@@ -39,21 +38,4 @@ export function transportsForVerify(
     (t) => t !== AuthenticatorTransport.Internal
   );
   return filtered.length > 0 ? filtered : transports;
-}
-
-/**
- * Map stored attachment → WebAuthn L3 `hints`.
- * Replaces the deprecated `authenticatorAttachment` selector at verify time.
- */
-export function hintsForVerify(
-  attachment: DemoAuthenticatorAttachment
-): WebAuthnHint[] | undefined {
-  switch (attachment) {
-    case AuthenticatorAttachment.Platform:
-      return [WebAuthnHint.ClientDevice];
-    case AuthenticatorAttachment.CrossPlatform:
-      return [WebAuthnHint.SecurityKey, WebAuthnHint.Hybrid];
-    default:
-      return undefined;
-  }
 }

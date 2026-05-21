@@ -20,17 +20,6 @@ export enum ResidentKeyRequirement {
   Required = 'required',
 }
 
-/**
- * `PublicKeyCredentialCreationOptions.hints` (WebAuthn L3).
- * Order = priority. `ClientDevice` keeps the UA on the platform authenticator path
- * (Touch ID / Windows Hello) instead of jumping to the cross-device QR/BLE sheet.
- */
-export enum WebAuthnHint {
-  SecurityKey = 'security-key',
-  ClientDevice = 'client-device',
-  Hybrid = 'hybrid',
-}
-
 /** `CredentialRequestOptions.mediation` — [W3C Credential Management]. */
 export enum CredentialMediation {
   Silent = 'silent',

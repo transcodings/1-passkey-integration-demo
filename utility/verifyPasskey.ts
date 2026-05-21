@@ -47,10 +47,7 @@ import {
   credentialIdBytesFromBase64url,
   randomWebAuthnChallenge,
 } from './webauthnEncoding';
-import {
-  hintsForVerify,
-  transportsForVerify,
-} from './webauthnTransports';
+import { transportsForVerify } from './webauthnTransports';
 import {
   formatWebAuthnErrorMessage,
   logWebAuthnErrorMessage,
@@ -137,7 +134,6 @@ export async function verifyPasskeyWithStoredUser(
     user.authenticator_attachment,
     user.transports ?? []
   );
-  const verifyHints = hintsForVerify(user.authenticator_attachment);
 
   // ┌───────────────────────────────────────────────────────────────────────┐
   // │ ROR (Related Origin Requests) — the cross-domain knob.                │
@@ -191,10 +187,6 @@ export async function verifyPasskeyWithStoredUser(
             ...(verifyTransports ? { transports: verifyTransports } : {}),
           },
         ],
-
-        // WebAuthn L3 hints — preferred over the deprecated
-        // `authenticatorAttachment` selector for biasing the UI.
-        ...(verifyHints ? { hints: verifyHints } : {}),
       },
       mediation: CredentialMediation.Optional,
     });
