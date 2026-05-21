@@ -1,5 +1,7 @@
 {
   "origins": [
-    "http://localhost:4000"
+    "http://localhost:4000",
+    "https://1-passkey-integration-demo.vercel.app",
+    "https://demo.mexpert-dvi.com"
   ]
 }
