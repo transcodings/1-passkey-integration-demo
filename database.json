@@ -1,0 +1,14 @@
+[
+  {
+    "id": "99f95306-bd04-407a-9675-040d98b53f40",
+    "credential_id": "MJqF81O1U2rcVCEXHzdTNThDcTYQRnnJfxXzhiWWVwU",
+    "rpid": "localhost",
+    "label": "Passkey Login Sample",
+    "public_key": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE5WwEAVdWGaQtHpOYt+qIKihzcspE\nMFz3xiNcGifu/w/JCoJ7fyws0jOmg1EKT7T6wTPk8XvcpuEA/L2sAei1Pg==\n-----END PUBLIC KEY-----",
+    "prev_counter": 0,
+    "authenticator_attachment": "platform",
+    "displayName": "John Doe",
+    "syntheticUserEmail": "johndoe@example.com",
+    "createdAt": 1779343518016
+  }
+]

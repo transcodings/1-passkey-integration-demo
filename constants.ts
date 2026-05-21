@@ -89,14 +89,13 @@ export enum SyntheticLocalEmailDomain {
   Local = '@demo.local',
 }
 
-// --- Persistence ---
+// --- Persistence & HTTP ---
 
-/** `localStorage` key — same JSON array shape as the old `database.json` file. */
-export enum DemoPasskeyStorageKey {
-  DatabaseJson = 'database.json',
+export enum DemoApiPath {
+  Users = '/api/users',
 }
 
-/** Keys used in older rows before snake_case credential shape. */
+/** Keys used in older `database.json` rows before snake_case. */
 export enum LegacyPasskeyUserJsonKey {
   CredentialIdBase64url = 'credentialIdBase64url',
   PasskeyName = 'passkeyName',
@@ -141,7 +140,13 @@ export enum DemoSessionJsonKey {
   DbUserId = 'dbUserId',
 }
 
-export enum DemoStorageProblemMessage {
+export enum UsersApiJsonKey {
+  Users = 'users',
+  User = 'user',
+  Error = 'error',
+}
+
+export enum DemoApiProblemMessage {
   InvalidUserPayload = 'Invalid user payload',
   UserNotFound = 'Passkey not found',
 }

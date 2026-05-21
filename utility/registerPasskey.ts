@@ -33,7 +33,7 @@
  *   2. Call `navigator.credentials.create({ publicKey })` → browser shows the
  *      system passkey UI (Touch ID / Windows Hello / QR / USB key).
  *   3. Extract the public key + signature counter from the returned credential.
- *   4. Save the row to `database.json` (localStorage) via `addDemoPasskeyUser`.
+ *   4. POST the row to `/api/users` (which writes `database.json`).
  */
 
 import {
@@ -269,12 +269,12 @@ export async function registerPasskeyDemo(
   // │   6. Extracts the public key + signCount + transports                 │
   // │   7. Stores the row keyed to the authenticated user                   │
   // │                                                                       │
-  // │ Our `getRegistrationArtifacts` + `addDemoPasskeyUser` below collapse all │
-  // │ of that into "parse a bit, write database.json" — DO NOT ship that.    │
+  // │ Our `getRegistrationArtifacts` + `POST /api/users` below collapse all │
+  // │ of that into "parse a bit, write to a JSON file" — DO NOT ship that.  │
   // └───────────────────────────────────────────────────────────────────────┘
   const arts = getRegistrationArtifacts(credential);
 
-  // Shape of the row we persist to `database.json` via `addDemoPasskeyUser`.
+  // Shape of the row we persist to `database.json` via `POST /api/users`.
   // `credential_id` is base64url(rawId) — the lookup key at sign-in time
   // (sent back as `allowCredentials[].id`).
   const payload: Omit<DemoPasskeyUser, 'createdAt'> = {

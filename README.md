@@ -2,7 +2,7 @@
 
 A small **Next.js app** that shows how **passkey (WebAuthn) registration and sign-in** work in the browser.
 
-No auth SDK, no external service — just the standard Web Authentication API, browser `localStorage`, and enough code to follow the flow end to end.
+No auth SDK, no external service — just the standard Web Authentication API, a JSON file, and enough code to follow the flow end to end.
 
 **Good for:** learning what `navigator.credentials.create` / `.get` actually do, copying the pattern into your own app, or demoing Touch ID / Windows Hello / security keys on `localhost`.
 
@@ -40,7 +40,7 @@ Authenticator creates a key pair and returns attestation
        ↓
 registrationArtifacts.ts extracts public key + sign counter
        ↓
-Row saved to database.json (localStorage key `database.json`)
+Row saved to database.json via POST /api/users
 ```
 
 **What gets stored:** credential id, public key (PEM), RP id, label, and a few display fields — enough to sign in again from the dropdown.
@@ -50,7 +50,7 @@ Row saved to database.json (localStorage key `database.json`)
 ```
 You pick a saved user from the dropdown
        ↓
-verifyPasskey.ts loads credential_id from database.json (localStorage)
+verifyPasskey.ts loads credential_id from database.json
        ↓
 navigator.credentials.get({ publicKey: { allowCredentials: […] } })
        ↓
@@ -65,7 +65,7 @@ Demo writes a sessionStorage blob → redirect to /dashboard
 
 ### 3. Dashboard
 
-Shows who you’re signed in as and every row in `database.json`. You can remove individual rows or clear the whole list (demo store only — passkeys on your device are not revoked).
+Shows who you’re signed in as and every row in `database.json`. You can remove individual rows or clear the whole list (demo DB only — passkeys on your device are not revoked).
 
 ---
 
@@ -76,7 +76,8 @@ Shows who you’re signed in as and every row in `database.json`. You can remove
 ├── app/
 │   ├── page.tsx                 Home — mounts the passkey form
 │   ├── dashboard/page.tsx       After sign-in; lists saved credentials
-│   └── layout.tsx               Root layout, theme, toasts
+│   ├── layout.tsx               Root layout, theme, toasts
+│   └── api/users/route.ts       GET / POST / DELETE → database.json
 │
 ├── components/
 │   ├── PasskeyDemo.tsx          Register + verify UI
@@ -87,31 +88,29 @@ Shows who you’re signed in as and every row in `database.json`. You can remove
 │   ├── registerPasskey.ts       Registration ceremony
 │   ├── verifyPasskey.ts         Sign-in ceremony + demo session
 │   ├── registrationArtifacts.ts Parse attestation (public key, counter)
-│   ├── db.ts                    database.json read/write (localStorage)
+│   ├── db.ts                    fetch helpers for /api/users
 │   ├── webauthnEncoding.ts      base64url, random challenge / user handle
 │   └── webauthnErrorMessage.ts    Friendly errors (cancel vs real failure)
 │
-├── constants.ts                 Enums, storage keys, UI copy
+├── constants.ts                 Enums, API paths, UI copy
+├── database.json                Demo credential store (safe to reset)
 └── public/.well-known/webauthn   Related origins file (hybrid / passkey tooling)
 ```
 
-**Rule of thumb:** UI in `components/`, ceremonies and persistence in `utility/`.
+**Rule of thumb:** UI in `components/`, ceremonies in `utility/`, file I/O only in `app/api/`.
 
 ---
 
-## Storage
+## API & data
 
-| Key | Where | Purpose |
-|-----|-------|---------|
-| `database.json` | `localStorage` | Saved credential rows — **same JSON array** as the old file on disk |
-| `passkey-demo-session` | `sessionStorage` | Demo “signed in” state for `/dashboard` |
-| `passkey-demo-theme` | `localStorage` | Light / dark / system preference |
+| Method | Path | Purpose |
+|--------|------|---------|
+| `GET` | `/api/users` | List all saved credentials |
+| `POST` | `/api/users` | Save a new credential after registration |
+| `DELETE` | `/api/users` | Clear all rows |
+| `DELETE` | `/api/users?id=<uuid>` | Remove one row |
 
-Each row matches the previous `DemoPasskeyUser` shape:
-
-`id`, `credential_id`, `rpid`, `label`, `public_key`, `prev_counter`, `authenticator_attachment`, `displayName`, `syntheticUserEmail`, `createdAt`
-
-Clear saved passkeys from the UI, or delete the `database.json` entry in DevTools → Application → Local Storage.
+`database.json` is a JSON array. You can edit or empty it during local dev.
 
 ---
 

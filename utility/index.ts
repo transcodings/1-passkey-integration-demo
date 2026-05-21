@@ -1,5 +1,5 @@
 /**
- * Public entry: import from `@/utility` in UI.
+ * Public entry: import from `@/utility` in UI; use `@/utility/db` in `app/api/**` for types only.
  */
 
 export {
