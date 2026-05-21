@@ -22,12 +22,9 @@ import { NextResponse } from 'next/server';
 
 export const runtime = 'edge';
 export const dynamic = 'force-static';
-
-const RELATED_ORIGINS = [
-  'https://1-passkey-integration-demo.vercel.app',
-  'https://demo.mexpert-dvi.com',
-  'https://testing.mexpert-dvi.com',
-];
+// 'https://1-passkey-integration-demo.vercel.app',
+// 'https://demo.mexpert-dvi.com',
+const RELATED_ORIGINS = ['https://testing.mexpert-dvi.com'];
 
 export function GET() {
   return NextResponse.json(
