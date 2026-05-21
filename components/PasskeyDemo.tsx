@@ -3,7 +3,7 @@
 import {
   CredentialButtonCaption,
   CredentialFormBusyAction,
-  DemoApiPath,
+  DemoPasskeyStorageKey,
   DemoAppRoute,
   DemoFormPlaceholder,
   DemoMarketingCopyFragment,
@@ -65,7 +65,7 @@ export function PasskeyDemo() {
   }, [showToast]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial load from database.json API
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial load from database.json (localStorage)
     void refreshUsers();
   }, [refreshUsers]);
 
@@ -303,11 +303,11 @@ export function PasskeyDemo() {
             <code className='rounded bg-zinc-100 px-1 text-[10px] dark:bg-zinc-800'>
               database.json
             </code>{' '}
-            via{' '}
+            (
             <code className='rounded bg-zinc-100 px-1 text-[10px] dark:bg-zinc-800'>
-              {DemoApiPath.Users}
+              localStorage[{DemoPasskeyStorageKey.DatabaseJson}]
             </code>
-            — pick who to authenticate as.
+            ) — pick who to authenticate as.
           </p>
 
           <label className='mt-4 flex flex-col gap-1'>

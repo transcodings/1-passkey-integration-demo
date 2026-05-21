@@ -89,10 +89,18 @@ export enum SyntheticLocalEmailDomain {
   Local = '@demo.local',
 }
 
-// --- Persistence & HTTP ---
+// --- Persistence ---
 
-export enum DemoApiPath {
-  Users = '/api/users',
+/** `localStorage` key — same JSON array shape as the old `database.json` file. */
+export enum DemoPasskeyStorageKey {
+  DatabaseJson = 'database.json',
+}
+
+/** Keys used in older rows before snake_case credential shape. */
+export enum LegacyPasskeyUserJsonKey {
+  CredentialIdBase64url = 'credentialIdBase64url',
+  PasskeyName = 'passkeyName',
+  AuthenticatorAttachmentCamel = 'authenticatorAttachment',
 }
 
 /** `sessionStorage` key for signed-in dashboard state. */
@@ -133,27 +141,9 @@ export enum DemoSessionJsonKey {
   DbUserId = 'dbUserId',
 }
 
-export enum UsersApiJsonKey {
-  Users = 'users',
-  User = 'user',
-  Error = 'error',
-}
-
-/** Body envelope for POST `{ user: DemoPasskeyUserPayload }`. */
-export enum UsersPostEnvelopeJsonKey {
-  User = 'user',
-}
-
-export enum DemoApiProblemMessage {
+export enum DemoStorageProblemMessage {
   InvalidUserPayload = 'Invalid user payload',
   UserNotFound = 'Passkey not found',
-}
-
-/** Keys used in older `database.json` rows before snake_case. */
-export enum LegacyPasskeyUserJsonKey {
-  CredentialIdBase64url = 'credentialIdBase64url',
-  PasskeyName = 'passkeyName',
-  AuthenticatorAttachmentCamel = 'authenticatorAttachment',
 }
 
 // --- Demo UI copy (avoid repeating literals across components) ---
