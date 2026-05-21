@@ -24,7 +24,8 @@ export const runtime = 'edge';
 export const dynamic = 'force-static';
 // 'https://1-passkey-integration-demo.vercel.app',
 // 'https://demo.mexpert-dvi.com',
-const RELATED_ORIGINS = ['https://testing.mexpert-dvi.com'];
+// 'https://testing.mexpert-dvi.com',
+const RELATED_ORIGINS = [''];
 
 export function GET() {
   return NextResponse.json(
