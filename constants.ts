@@ -31,6 +31,14 @@ export enum WebAuthnHint {
   Hybrid = 'hybrid',
 }
 
+/** `CredentialRequestOptions.mediation` — [W3C Credential Management]. */
+export enum CredentialMediation {
+  Silent = 'silent',
+  Optional = 'optional',
+  Required = 'required',
+  Conditional = 'conditional',
+}
+
 /** `PublicKeyCredentialCreationOptions.attestation`. */
 export enum AttestationConveyancePreference {
   None = 'none',

@@ -34,11 +34,13 @@
  */
 
 import {
+  CredentialMediation,
   CredentialOperationTimeoutMs,
   DemoSessionJsonKey,
   DemoUserFacingAlert,
   PublicKeyCredentialType,
   SessionStorageKey,
+  UserVerificationRequirement,
 } from '@/constants';
 import type { DemoPasskeyUser } from './db';
 import {
@@ -46,6 +48,7 @@ import {
   randomWebAuthnChallenge,
 } from './webauthnEncoding';
 import {
+  hintsForVerify,
   transportsForVerify,
 } from './webauthnTransports';
 import {
@@ -134,6 +137,31 @@ export async function verifyPasskeyWithStoredUser(
     user.authenticator_attachment,
     user.transports ?? []
   );
+  const verifyHints = hintsForVerify(user.authenticator_attachment);
+
+  // ┌───────────────────────────────────────────────────────────────────────┐
+  // │ ROR (Related Origin Requests) — the cross-domain knob.                │
+  // │                                                                       │
+  // │ We MUST pass `rpId` explicitly here. If omitted, the browser defaults │
+  // │ to the current origin's host, so credentials registered with a        │
+  // │ different rp.id (e.g. registered on demo.mexpert-dvi.com, now         │
+  // │ verifying on testing.mexpert-dvi.com or *.vercel.app) will never      │
+  // │ match — the ROR fetch never even fires.                               │
+  // │                                                                       │
+  // │ With `rpId = user.rpid`:                                              │
+  // │   - origin == rpId       → normal match                               │
+  // │   - origin != rpId       → browser fetches                            │
+  // │                            https://{rpId}/.well-known/webauthn        │
+  // │                            and only proceeds if current origin is in  │
+  // │                            its `origins` list.                        │
+  // │                                                                       │
+  // │ Requirements:                                                         │
+  // │   - The rpId host must serve `/.well-known/webauthn` as JSON.         │
+  // │   - All origins that want to share creds must be listed there.        │
+  // │   - rpId host must NOT be on the Public Suffix List (so *.vercel.app  │
+  // │     can be a consumer, never a base rp.id).                           │
+  // │   - Chrome 128+ / Safari 18+ / Edge. Firefox: not yet.                │
+  // └───────────────────────────────────────────────────────────────────────┘
   try {
     credential = await navigator.credentials.get({
       publicKey: {
@@ -145,6 +173,11 @@ export async function verifyPasskeyWithStoredUser(
 
         // Browser ceremony timeout (ms).
         timeout: CredentialOperationTimeoutMs.Default,
+
+        // Explicit rp.id from the stored credential row — drives ROR.
+        rpId: user.rpid,
+
+        userVerification: UserVerificationRequirement.Preferred,
 
         // [SERVER] In production the server builds this list. Either:
         //   - look up the user's credentials by their account, OR
@@ -158,7 +191,12 @@ export async function verifyPasskeyWithStoredUser(
             ...(verifyTransports ? { transports: verifyTransports } : {}),
           },
         ],
+
+        // WebAuthn L3 hints — preferred over the deprecated
+        // `authenticatorAttachment` selector for biasing the UI.
+        ...(verifyHints ? { hints: verifyHints } : {}),
       },
+      mediation: CredentialMediation.Optional,
     });
 
     // `null` (instead of a rejection) means the ceremony resolved without a
