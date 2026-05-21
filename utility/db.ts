@@ -5,6 +5,7 @@
 import {
   AuthenticatorAttachment,
   DemoApiPath,
+  type AuthenticatorTransport,
   UsersApiJsonKey,
 } from '@/constants';
 
@@ -18,6 +19,7 @@ export type DemoPasskeyUser = {
   public_key: string;
   prev_counter: number;
   authenticator_attachment: DemoAuthenticatorAttachment;
+  transports: AuthenticatorTransport[];
   displayName: string;
   syntheticUserEmail: string;
   createdAt: number;

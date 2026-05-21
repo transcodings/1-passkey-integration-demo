@@ -63,6 +63,33 @@ export function isAuthenticatorAttachment(
   );
 }
 
+/** `PublicKeyCredentialDescriptor.transports` — [W3C WebAuthn]. */
+export enum AuthenticatorTransport {
+  Usb = 'usb',
+  Nfc = 'nfc',
+  Ble = 'ble',
+  Internal = 'internal',
+  Hybrid = 'hybrid',
+}
+
+export const AUTHENTICATOR_TRANSPORT_VALUES: ReadonlySet<string> = new Set(
+  Object.values(AuthenticatorTransport) as string[]
+);
+
+export function isAuthenticatorTransport(
+  value: unknown
+): value is AuthenticatorTransport {
+  return (
+    typeof value === 'string' && AUTHENTICATOR_TRANSPORT_VALUES.has(value)
+  );
+}
+
+export function isAuthenticatorTransportList(
+  value: unknown
+): value is AuthenticatorTransport[] {
+  return Array.isArray(value) && value.every(isAuthenticatorTransport);
+}
+
 export enum CredentialFormBusyAction {
   Create = 'create',
   Verify = 'verify',

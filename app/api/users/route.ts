@@ -3,9 +3,11 @@ import {
   AuthenticatorAttachment,
   DemoApiProblemMessage,
   isAuthenticatorAttachment,
+  isAuthenticatorTransportList,
   LegacyPasskeyUserJsonKey,
   UsersApiJsonKey,
 } from '@/constants';
+import { parseStoredTransports } from '@/utility/webauthnTransports';
 import { readFile, writeFile } from 'fs/promises';
 import { NextResponse } from 'next/server';
 import path from 'path';
@@ -25,6 +27,7 @@ function isDemoPasskeyUser(v: unknown): v is DemoPasskeyUser {
     typeof x.public_key === 'string' &&
     typeof x.prev_counter === 'number' &&
     isAuthenticatorAttachment(x.authenticator_attachment) &&
+    isAuthenticatorTransportList(x.transports) &&
     typeof x.displayName === 'string' &&
     typeof x.syntheticUserEmail === 'string' &&
     typeof x.createdAt === 'number'
@@ -81,6 +84,7 @@ function tryMigrateLegacyRecord(v: unknown): DemoPasskeyUser | null {
     public_key: typeof x.public_key === 'string' ? x.public_key : '',
     prev_counter: typeof x.prev_counter === 'number' ? x.prev_counter : 0,
     authenticator_attachment: attachment,
+    transports: parseStoredTransports(x.transports),
     displayName: x.displayName,
     syntheticUserEmail: x.syntheticUserEmail,
     createdAt: x.createdAt,
@@ -105,6 +109,7 @@ function isIncomingUser(
     typeof x.public_key === 'string' &&
     typeof x.prev_counter === 'number' &&
     isAuthenticatorAttachment(x.authenticator_attachment) &&
+    isAuthenticatorTransportList(x.transports) &&
     typeof x.displayName === 'string' &&
     typeof x.syntheticUserEmail === 'string'
   );
@@ -171,6 +176,7 @@ export async function POST(req: Request) {
       public_key: p.public_key,
       prev_counter: p.prev_counter,
       authenticator_attachment: p.authenticator_attachment,
+      transports: p.transports,
       displayName: p.displayName,
       syntheticUserEmail: p.syntheticUserEmail,
       createdAt: Date.now(),

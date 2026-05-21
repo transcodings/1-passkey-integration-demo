@@ -46,6 +46,9 @@ import {
   randomWebAuthnChallenge,
 } from './webauthnEncoding';
 import {
+  transportsForVerify,
+} from './webauthnTransports';
+import {
   formatWebAuthnErrorMessage,
   logWebAuthnErrorMessage,
 } from './webauthnErrorMessage';
@@ -127,6 +130,10 @@ export async function verifyPasskeyWithStoredUser(
   // verify response) belongs on the server.
   let credential: Credential | null;
   const startedAt = performance.now();
+  const verifyTransports = transportsForVerify(
+    user.authenticator_attachment,
+    user.transports ?? []
+  );
   try {
     credential = await navigator.credentials.get({
       publicKey: {
@@ -145,7 +152,11 @@ export async function verifyPasskeyWithStoredUser(
         //     discoverable credential they have for this RP id).
         // Restricting to one id here mirrors our "Sign in as <dropdown>" UX.
         allowCredentials: [
-          { type: PublicKeyCredentialType.PublicKey, id: rawId },
+          {
+            type: PublicKeyCredentialType.PublicKey,
+            id: rawId,
+            ...(verifyTransports ? { transports: verifyTransports } : {}),
+          },
         ],
       },
     });

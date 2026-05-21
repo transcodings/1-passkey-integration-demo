@@ -209,6 +209,14 @@ export default function DashboardPage() {
                 </dd>
               </div>
               <div>
+                <dt className="text-zinc-500 dark:text-zinc-400">transports</dt>
+                <dd className="font-mono text-xs text-zinc-900 dark:text-zinc-100">
+                  {currentRow.transports?.length
+                    ? JSON.stringify(currentRow.transports)
+                    : '—'}
+                </dd>
+              </div>
+              <div>
                 <dt className="text-zinc-500 dark:text-zinc-400">
                   prev_counter
                 </dt>
@@ -392,6 +400,10 @@ export default function DashboardPage() {
             ,{' '}
             <code className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">
               authenticator_attachment
+            </code>
+            ,{' '}
+            <code className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">
+              transports
             </code>
             .
             {currentRow === null &&

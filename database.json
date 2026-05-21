@@ -1,14 +1,17 @@
 [
   {
-    "id": "99f95306-bd04-407a-9675-040d98b53f40",
-    "credential_id": "MJqF81O1U2rcVCEXHzdTNThDcTYQRnnJfxXzhiWWVwU",
+    "id": "f024476b-e2a9-4829-a7d2-ee643413beae",
+    "credential_id": "AJdw4y8ekT5faisllOVkq8ihzC-W1oTg5_rDK9jAri4",
     "rpid": "localhost",
     "label": "Passkey Login Sample",
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE5WwEAVdWGaQtHpOYt+qIKihzcspE\nMFz3xiNcGifu/w/JCoJ7fyws0jOmg1EKT7T6wTPk8XvcpuEA/L2sAei1Pg==\n-----END PUBLIC KEY-----",
+    "public_key": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEzJ/7qId24EvAJU08vqc3HHK/HyRp\noWstABg/cdNgXELRh6DGpygd7Y7mofew+G7mvfzbiYCMpvhFm145atZwBw==\n-----END PUBLIC KEY-----",
     "prev_counter": 0,
     "authenticator_attachment": "platform",
+    "transports": [
+      "internal"
+    ],
     "displayName": "John Doe",
     "syntheticUserEmail": "johndoe@example.com",
-    "createdAt": 1779343518016
+    "createdAt": 1779344291575
   }
 ]

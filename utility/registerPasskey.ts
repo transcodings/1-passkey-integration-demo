@@ -53,6 +53,7 @@ import {
 import type { DemoPasskeyUser } from './db';
 import { addDemoPasskeyUser } from './db';
 import { getRegistrationArtifacts } from './registrationArtifacts';
+import { transportsFromAttestationResponse } from './webauthnTransports';
 import {
   bufferToBase64Url,
   randomUserHandle,
@@ -273,6 +274,7 @@ export async function registerPasskeyDemo(
   // │ of that into "parse a bit, write to a JSON file" — DO NOT ship that.  │
   // └───────────────────────────────────────────────────────────────────────┘
   const arts = getRegistrationArtifacts(credential);
+  const transports = transportsFromAttestationResponse(credential);
 
   // Shape of the row we persist to `database.json` via `POST /api/users`.
   // `credential_id` is base64url(rawId) — the lookup key at sign-in time
@@ -285,6 +287,7 @@ export async function registerPasskeyDemo(
     public_key: arts.public_key,
     prev_counter: arts.prev_counter,
     authenticator_attachment: params.authenticatorAttachment,
+    transports,
     displayName: displayNameResolved,
     syntheticUserEmail: userNameResolved,
   };
